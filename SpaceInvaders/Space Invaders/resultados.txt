@@ -1,0 +1,68 @@
+Nombre:?
+Puntaje: 110
+
+
+Nombre:?
+Puntaje: 80
+
+
+Nombre:Emmanuel
+Puntaje: 30
+
+
+Nombre:Emmanuel
+Puntaje: 550
+
+
+Nombre:ASDFA
+Puntaje: 80
+
+
+Nombre:
+Puntaje: 1510
+
+
+Nombre:_
+Puntaje: 250
+
+
+Nombre:?
+Puntaje: 1000
+
+
+Nombre:_
+Puntaje: 1040
+
+
+Nombre:?
+Puntaje: 50
+
+
+Nombre:
+Puntaje: 5500
+
+
+Nombre:?
+Puntaje: 27500
+
+
+Nombre:?
+Puntaje: 37950
+
+
+Nombre:_
+Puntaje: 48950
+
+
+Nombre:?
+Puntaje: 550
+
+
+Nombre:?
+Puntaje: 50
+
+
+Nombre:?
+Puntaje: 50
+
+
