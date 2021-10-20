@@ -50,7 +50,7 @@ void map() {   // Imprime la cancha que se quiere cortar
 		<< "þþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþþ\n" << endl;
 }
 
-void primer_algoritmo_decorte(tico_chapeadora_Tesla chapeadora) {  // Primer algoritmo de corte 
+void primer_algoritmo_decorte_vertical(tico_chapeadora_Tesla chapeadora) {  // Primer algoritmo de corte 
 	bool borde_abajo = false;
 	for (int i = 0; i < 1250; i++) {
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15); // Lo pone de color blanco
@@ -107,17 +107,25 @@ void primer_algoritmo_decorte(tico_chapeadora_Tesla chapeadora) {  // Primer alg
 				gotoxy(chapeadora.x, chapeadora.y + 2);
 				cout << "v" << endl;
 		}
-		Sleep(100);
+		//Sleep(100);
 	}
 }
 
-void segundo_algoritmo_decorte(tico_chapeadora_Tesla chapeadora) {
+void segundo_algoritmo_decorte_horizontal(tico_chapeadora_Tesla chapeadora) {
 	bool borde_derecha = false;
 	bool cortar = false;
 	int contador = 0;
 	for (int i = 0; i < 1250; i++) {
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-		gotoxy(chapeadora.x, chapeadora.y  - 1);
+		if (i == 1) {
+			gotoxy(chapeadora.x + 2, chapeadora.y - 1);
+			
+		}
+		else
+		{
+			gotoxy(chapeadora.x, chapeadora.y - 1);
+		}
+
 		cout << chapeadora.chapeadora << endl;
 
 		if (contador == 2) {            // Determina cuando hay que cortar
@@ -127,50 +135,58 @@ void segundo_algoritmo_decorte(tico_chapeadora_Tesla chapeadora) {
 
 		if (borde_derecha == false) {   // Mientras no llegue al borde se mueve de izquierda a derecha
 			if (cortar == true) {
-				gotoxy(chapeadora.x - 1, chapeadora.y - 1);
-				cout << " " << endl;
-				gotoxy(chapeadora.x - 2, chapeadora.y - 1);
-				cout << " " << endl;
+				if (chapeadora.x != 4) {
+					gotoxy(chapeadora.x - 1, chapeadora.y - 1);
+					cout << " " << endl;
+					gotoxy(chapeadora.x - 2, chapeadora.y - 1);
+					cout << " " << endl;
+				}
 			}
 			else{
-				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-				gotoxy(chapeadora.x - 1, chapeadora.y - 1);
-				cout << "v" << endl;
-				gotoxy(chapeadora.x - 2, chapeadora.y - 1);
-				cout << "v" << endl;
+				if (chapeadora.x != 4) {
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+					gotoxy(chapeadora.x - 1, chapeadora.y - 1);
+					cout << "v" << endl;
+					
+				}
 			}
 			chapeadora.x++;
 		}
+
 		else {                // Cuando llega al borde se mueve de derecha a izquierda 
 			if (cortar == true) {
-				gotoxy(chapeadora.x + 1, chapeadora.y - 1);
-				cout << " " << endl;
-				gotoxy(chapeadora.x + 2, chapeadora.y - 1);
-				cout << " " << endl;
+				
+					gotoxy(chapeadora.x + 1, chapeadora.y - 1);
+					cout << " " << endl;
+					gotoxy(chapeadora.x + 2, chapeadora.y - 1);
+					cout << " " << endl;
+				
 			}
 			else {
-				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-				gotoxy(chapeadora.x + 1, chapeadora.y - 1);
-				cout << "v" << endl;
-				gotoxy(chapeadora.x + 2, chapeadora.y - 1);
-				cout << "v" << endl;
+				
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+					gotoxy(chapeadora.x + 1, chapeadora.y - 1);
+					cout << "v" << endl;
+					gotoxy(chapeadora.x + 2, chapeadora.y - 1);
+					cout << "v" << endl;
+				
 			}
 			chapeadora.x--;
 		}
 
 		if (chapeadora.x == 46) {                                                           // Llega al final derecho dela cancha 
 			borde_derecha = true;
+			chapeadora.x = 43;
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			if (cortar == true) {                                                           // Lo corta
-				gotoxy(chapeadora.x - 1, chapeadora.y - 1);
+				gotoxy(chapeadora.x + 2, chapeadora.y - 1);
 				cout << " " << endl;
 			}
 			else {                                                                         // Deja el sacate
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-				gotoxy(chapeadora.x - 1, chapeadora.y - 1);
+				gotoxy(chapeadora.x+ 2, chapeadora.y - 1);
 				cout << "v" << endl;
-				gotoxy(chapeadora.x - 2, chapeadora.y - 1);
-				cout << "v" << endl;
+				
 			}
 			contador++;
 			chapeadora.y++;
@@ -178,18 +194,17 @@ void segundo_algoritmo_decorte(tico_chapeadora_Tesla chapeadora) {
 
 		if (chapeadora.x == 3 && borde_derecha == true) {                                          // Llega al final izquierdo de la cancha
 			borde_derecha = false;
+			chapeadora.x = 6;
 			if (cortar == true) {                                                                 // Lo corta
-				gotoxy(chapeadora.x + 1, chapeadora.y - 1);
+				gotoxy(chapeadora.x - 2, chapeadora.y - 1);
 				cout << " " << endl;
-				gotoxy(chapeadora.x + 2, chapeadora.y - 1);
-				cout << " " << endl;
+				
 			}
 			else {                                                                              // Deja el sacate
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-				gotoxy(chapeadora.x + 1, chapeadora.y - 1);
+				gotoxy(chapeadora.x - 2, chapeadora.y - 1);
 				cout << "v" << endl;
-				gotoxy(chapeadora.x + 2, chapeadora.y - 1);
-				cout << "v" << endl;
+				
 			}
 			contador++;
 			chapeadora.y++;
@@ -198,20 +213,25 @@ void segundo_algoritmo_decorte(tico_chapeadora_Tesla chapeadora) {
 		if (chapeadora.y == 26) {           // Cuando termina el programa
 			return;
 		}
-		Sleep(100);
+		//Sleep(100);
 	}
 }
+
+void tercer_algoritmo_decorte_diagonal(tico_chapeadora_Tesla chapeadora){}
 
 int main()
 { 
 	bool game = true;
 	tico_chapeadora_Tesla chapeadora;
 	while (game) {
-		/*map();
-		primer_algoritmo_decorte(chapeadora);
-		system("cls")*/;
 		map();
-		segundo_algoritmo_decorte(chapeadora);
-		system("pause");
+		primer_algoritmo_decorte_vertical(chapeadora);
+		system("cls");
+		map();
+		segundo_algoritmo_decorte_horizontal(chapeadora);
+		system("cls");
+		/*map();
+		tercer_algoritmo_decorte_diagonal(chapeadora);
+		system("cls");*/
 	}
 }
