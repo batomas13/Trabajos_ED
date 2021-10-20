@@ -52,7 +52,7 @@ void map() {   // Imprime la cancha que se quiere cortar
 
 void primer_algoritmo_decorte(tico_chapeadora_Tesla chapeadora) {  // Primer algoritmo de corte 
 	bool borde_abajo = false;
-	for (int t = 0; t < 1250; t++) {
+	for (int i = 0; i < 1250; i++) {
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15); // Lo pone de color blanco
 		if (chapeadora.y == 25) {  // Cuando llega al final de la cancha se mueve de posicion 
 			borde_abajo = true;
@@ -103,9 +103,100 @@ void primer_algoritmo_decorte(tico_chapeadora_Tesla chapeadora) {  // Primer alg
 			cout << " " << endl;
 		}
 		else {
-				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10); SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10); 
 				gotoxy(chapeadora.x, chapeadora.y + 2);
 				cout << "v" << endl;
+		}
+		Sleep(100);
+	}
+}
+
+void segundo_algoritmo_decorte(tico_chapeadora_Tesla chapeadora) {
+	bool borde_derecha = false;
+	bool cortar = false;
+	int contador = 0;
+	for (int i = 0; i < 1250; i++) {
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+		gotoxy(chapeadora.x, chapeadora.y  - 1);
+		cout << chapeadora.chapeadora << endl;
+
+		if (contador == 2) {            // Determina cuando hay que cortar
+			cortar = !cortar;
+			contador = 0;
+		}
+
+		if (borde_derecha == false) {   // Mientras no llegue al borde se mueve de izquierda a derecha
+			if (cortar == true) {
+				gotoxy(chapeadora.x - 1, chapeadora.y - 1);
+				cout << " " << endl;
+				gotoxy(chapeadora.x - 2, chapeadora.y - 1);
+				cout << " " << endl;
+			}
+			else{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				gotoxy(chapeadora.x - 1, chapeadora.y - 1);
+				cout << "v" << endl;
+				gotoxy(chapeadora.x - 2, chapeadora.y - 1);
+				cout << "v" << endl;
+			}
+			chapeadora.x++;
+		}
+		else {                // Cuando llega al borde se mueve de derecha a izquierda 
+			if (cortar == true) {
+				gotoxy(chapeadora.x + 1, chapeadora.y - 1);
+				cout << " " << endl;
+				gotoxy(chapeadora.x + 2, chapeadora.y - 1);
+				cout << " " << endl;
+			}
+			else {
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				gotoxy(chapeadora.x + 1, chapeadora.y - 1);
+				cout << "v" << endl;
+				gotoxy(chapeadora.x + 2, chapeadora.y - 1);
+				cout << "v" << endl;
+			}
+			chapeadora.x--;
+		}
+
+		if (chapeadora.x == 46) {                                                           // Llega al final derecho dela cancha 
+			borde_derecha = true;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			if (cortar == true) {                                                           // Lo corta
+				gotoxy(chapeadora.x - 1, chapeadora.y - 1);
+				cout << " " << endl;
+			}
+			else {                                                                         // Deja el sacate
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				gotoxy(chapeadora.x - 1, chapeadora.y - 1);
+				cout << "v" << endl;
+				gotoxy(chapeadora.x - 2, chapeadora.y - 1);
+				cout << "v" << endl;
+			}
+			contador++;
+			chapeadora.y++;
+		}
+
+		if (chapeadora.x == 3 && borde_derecha == true) {                                          // Llega al final izquierdo de la cancha
+			borde_derecha = false;
+			if (cortar == true) {                                                                 // Lo corta
+				gotoxy(chapeadora.x + 1, chapeadora.y - 1);
+				cout << " " << endl;
+				gotoxy(chapeadora.x + 2, chapeadora.y - 1);
+				cout << " " << endl;
+			}
+			else {                                                                              // Deja el sacate
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				gotoxy(chapeadora.x + 1, chapeadora.y - 1);
+				cout << "v" << endl;
+				gotoxy(chapeadora.x + 2, chapeadora.y - 1);
+				cout << "v" << endl;
+			}
+			contador++;
+			chapeadora.y++;
+		}
+
+		if (chapeadora.y == 26) {           // Cuando termina el programa
+			return;
 		}
 		Sleep(100);
 	}
@@ -116,8 +207,11 @@ int main()
 	bool game = true;
 	tico_chapeadora_Tesla chapeadora;
 	while (game) {
-		map();
+		/*map();
 		primer_algoritmo_decorte(chapeadora);
-		system("cls");
+		system("cls")*/;
+		map();
+		segundo_algoritmo_decorte(chapeadora);
+		system("pause");
 	}
 }
