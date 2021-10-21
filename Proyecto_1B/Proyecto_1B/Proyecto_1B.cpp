@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include "windows.h"
+#include "windows.h";
 using namespace std;
 
 typedef struct tico_chapeadora_Tesla {
@@ -107,7 +107,7 @@ void primer_algoritmo_decorte_vertical(tico_chapeadora_Tesla chapeadora) {  // P
 				gotoxy(chapeadora.x, chapeadora.y + 2);
 				cout << "v" << endl;
 		}
-		//Sleep(100);
+		Sleep(100);
 	}
 }
 
@@ -213,25 +213,104 @@ void segundo_algoritmo_decorte_horizontal(tico_chapeadora_Tesla chapeadora) {
 		if (chapeadora.y == 26) {           // Cuando termina el programa
 			return;
 		}
-		//Sleep(100);
+		Sleep(100);
 	}
 }
 
-void tercer_algoritmo_decorte_diagonal(tico_chapeadora_Tesla chapeadora){}
+void tercer_algoritmo_decorte_diagonal(tico_chapeadora_Tesla chapeadora) { // Tercer algoritmo de corte
+	bool borde_abajo = false;
+	for (int i = 0; i < 1250; i++) {
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15); // Lo pone de color blanco
+		if (chapeadora.y == 25) {  // Cuando llega al final de la cancha se mueve de posicion 
+			borde_abajo = true;
+			if (chapeadora.x % 2 == 0) {                    // Si tiene que cortar 
+				gotoxy(chapeadora.x, chapeadora.y - 1);
+				cout << " " << endl;
+			}
+			else {                                         // Si no tiene que cortar
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				gotoxy(chapeadora.x, chapeadora.y - 2);
+				cout << "v" << endl;
+				gotoxy(chapeadora.x, chapeadora.y - 1);
+				cout << "v" << endl;
+			}
+			chapeadora.x++;
+			chapeadora.y -= 2;
+		}
+		if (chapeadora.y == 3 && borde_abajo == true) { // Cuando llega al tope de la cancha
+			borde_abajo = false;
+			if (chapeadora.x % 2 == 0) {
+				gotoxy(chapeadora.x, chapeadora.y + 1);
+				cout << " " << endl;
+			}
+			else {
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				gotoxy(chapeadora.x, chapeadora.y + 2);
+				cout << "v" << endl;
+				gotoxy(chapeadora.x, chapeadora.y + 1);
+				cout << "v" << endl;
+			}
+			chapeadora.x++;
+		}
+		if (chapeadora.x == 46) { // Cuando termina de cortar
+			chapeadora.x = 4;
+			chapeadora.y = 3;
+			return;
+		}
+		gotoxy(chapeadora.x, chapeadora.y);          // El movimiento de la tico_chapeadora_tesla
+		cout << chapeadora.chapeadora << endl;
+		if (borde_abajo == true) {
+			chapeadora.y--;
+		}
+		else {
+			chapeadora.y++;
+		}
+		if (chapeadora.y % 2 == 0) {
+			gotoxy(chapeadora.x, chapeadora.y - 2);
+			cout << " " << endl;
+		}
+		else {
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			gotoxy(chapeadora.x, chapeadora.y + 2);
+			cout << "v" << endl;
+		}
+		Sleep(100);
+	}
+
+
+}
 
 int main()
 { 
 	bool game = true;
 	tico_chapeadora_Tesla chapeadora;
 	while (game) {
-		map();
-		primer_algoritmo_decorte_vertical(chapeadora);
+		/*int Option;
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+		cout << "1. Patron de corte vertical" << endl;
+		cout << "2. Patron de corte Horizontal" << endl;
+		cout << "4. Termina" << endl;
+		cout << "Digite su opcion: ";
+		cin >> Option;
 		system("cls");
 		map();
-		segundo_algoritmo_decorte_horizontal(chapeadora);
-		system("cls");
-		/*map();
+		switch (Option)
+		{
+		case 1:
+			primer_algoritmo_decorte_vertical(chapeadora);
+			system("cls");
+			break;
+		case 2:
+			segundo_algoritmo_decorte_horizontal(chapeadora);
+			system("cls");
+			break;
+		case 4:
+			game = false;
+		default:
+			break;
+		}*/
+		map();
 		tercer_algoritmo_decorte_diagonal(chapeadora);
-		system("cls");*/
+		system("cls");
 	}
 }
