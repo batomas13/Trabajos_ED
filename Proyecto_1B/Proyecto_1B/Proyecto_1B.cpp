@@ -334,7 +334,7 @@ void stats(int tiempo){
 }
 
 int main()
-{ 
+{
 	bool game = true;
 	int tiempo_completo;
 	tico_chapeadora_Tesla chapeadora;
@@ -355,7 +355,7 @@ int main()
 		switch (Option)
 		{
 		case 1:
-			primer_algoritmo_decorte_vertical(chapeadora);
+			primer_algoritmo_decorte_vertical(chapeadora);	
 			system("cls");
 			break;
 		case 2:
@@ -381,7 +381,6 @@ int main()
 		default:
 			break;
 		}
-		
 	}
 	stats(tiempo_completo);
 }

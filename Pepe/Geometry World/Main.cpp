@@ -1,11 +1,10 @@
-#include <stdio.h>
-#include <iostream>
+
 #include <math.h>
 #include <windows.h>
 #include <stdlib.h>
 #include <cstdlib>
 #include <time.h>
-#include <string.h>
+//#include "personajes.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_ttf.h>
@@ -15,296 +14,265 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
-#include <string>
 
-using namespace std;
 
-//Globales
-//**********************************************************
-const int total = 30;
-const int longitud = 6;
-int Pistas = 0;
-int Agrupacion_Pistas = 0;
-int NewLetras = 0;
+
 #define FPS 30.0
 
-//Elementos de allegro que se utilizarán para el juego
-//**********************************************************
-ALLEGRO_DISPLAY* pantalla;
-ALLEGRO_FONT* fuente;
+#define ANCHO 600
+#define ALTO  600
 
-//LAS SIGUIENTES DOS FUNCIONES SE USAN PARA GENERAR NUMEROS RANDOM "VERDADEROS"
-//EN PERIODOS DE TIEMPO MUY CORTOS
-long g_seed = 1;
-inline int fastrand() {
-	g_seed = (214013 * g_seed + 2531011);
-	return (g_seed >> 16) & 0x7FFF;
+
+
+int main(int argc, char const* argv[]) {
+
+    ALLEGRO_DISPLAY* pantalla;
+
+    if (!al_init()) {
+        al_show_native_message_box(NULL, NULL, NULL,
+            "Could not initialize Allegro5 ", NULL, NULL);
+    }
+
+    pantalla = al_create_display(ANCHO, ALTO);
+    //al_set_new_display_flags(ALLEGRO_NOFRAME);
+    al_set_window_position(pantalla, 200, 100);
+    al_set_window_title(pantalla, "Space Invaders");
+
+    if (!pantalla) {
+        al_show_native_message_box(pantalla, "Sample Tittle", "Display Settings",
+            "Display window was no created ", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+    }
+
+    //L�neas para obtener las funcionalidades del uso de las fuentes
+//*******************
+    al_init_font_addon();
+    al_init_ttf_addon();
+    //*******************
+    //L�nea para obtener las funcionalidades de las im�genes
+    //*******************
+    al_init_image_addon();
+    //*******************
+
+
+    // Inicializar el teclado
+    al_install_keyboard();
+    al_init_primitives_addon();
+    ALLEGRO_KEYBOARD_STATE keyState;
+
+
+    //L�neas para obtener las funcionalidades de los audios
+    //*******************
+    al_install_audio();
+    al_init_acodec_addon();
+    al_reserve_samples(1000);
+    //*******************
+
+
+
+    //Timers que se necesitar�n para el juego
+    //**********************************************************
+    ALLEGRO_TIMER* timer = al_create_timer(5 / FPS);
+
+    //**********************************************************
+
+    //Se crea una cola de eventos
+    ALLEGRO_EVENT_QUEUE* colaEventos = al_create_event_queue();
+
+    //Registro de los eventos
+    //**********************************************************
+    al_register_event_source(colaEventos, al_get_timer_event_source(timer));
+    al_register_event_source(colaEventos, al_get_keyboard_event_source());
+    al_register_event_source(colaEventos, al_get_display_event_source(pantalla));
+
+    //**********************************************************
+
+
+
+    //**********************************************************
+    ALLEGRO_BITMAP* nave = al_load_bitmap("Recursos/nave.bmp");
+    //ALLEGRO_BITMAP* buffer = al_create_bitmap(ANCHO, ALTO);
+   // ALLEGRO_BITMAP* portada = al_load_bitmap("Recursos/portada.bmp");
+   // ALLEGRO_BITMAP* fondo = al_load_bitmap("Recursos/fondo.bmp");
+   //ALLEGRO_BITMAP* imgMuros = al_load_bitmap("Recursos/escudos.bmp");
+
+    //ALLEGRO_SAMPLE* musicaFondo = al_load_sample("Recursos/Invaders.mid");
+
+    bool done = false, draw = true, active = false;
+    int x = 10, y = 10, moveSpeed = 5;
+    int sourceX, sourceY;
+
+    //Inicializaci�n de los timer
+    //**********************************************************
+    al_start_timer(timer);
+
+    while (!done) {
+        ALLEGRO_EVENT eventos;
+        al_wait_for_event(colaEventos, &eventos);
+        al_get_keyboard_state(&keyState);
+
+        /* if (eventos.type == ALLEGRO_EVENT_KEY_DOWN) {
+            switch (eventos.keyboard.keycode) {
+            case ALLEGRO_KEY_ESCAPE:
+                done = true;
+                break;
+            case ALLEGRO_KEY_DOWN:
+                y += moveSpeed;
+                break;
+            case ALLEGRO_KEY_UP:
+                y -= moveSpeed;
+                break;
+            case ALLEGRO_KEY_LEFT:
+                x -= moveSpeed;
+                break;
+            case ALLEGRO_KEY_RIGHT:
+                x += moveSpeed;
+                break;
+
+            default:
+                break;
+            }
+        } */
+        if (eventos.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+            done = true;
+        }
+        else if (eventos.type == ALLEGRO_EVENT_TIMER) {
+            if (al_key_down(&keyState, ALLEGRO_KEY_DOWN))
+            {
+                /* code */
+            }
+
+        }
+
+        if (eventos.type == ALLEGRO_EVENT_TIMER) {
+            al_get_keyboard_state(&keyState);
+            active = true;
+            if (al_key_down(&keyState, ALLEGRO_KEY_DOWN)) {
+                y += moveSpeed;
+            }
+            else if (al_key_down(&keyState, ALLEGRO_KEY_UP)) {
+                y -= moveSpeed;
+            }
+            else if (al_key_down(&keyState, ALLEGRO_KEY_RIGHT)) {
+                x += moveSpeed;
+            }
+            else if (al_key_down(&keyState, ALLEGRO_KEY_LEFT)) {
+                x -= moveSpeed;
+            }
+            else
+                active = false;
+            draw = true;
+        }
+        if (draw)
+        {
+            //al_draw_bitmap(nave, x, y, NULL);
+            al_convert_mask_to_alpha(nave, al_map_rgb(255, 0, 255));
+            al_draw_bitmap_region(nave, 0, 0, 30, 20, x, y, NULL);
+            //al_draw_rectangle(x, y, x + 10, y + 10, al_map_rgb(44, 117, 225), 1);
+            al_flip_display();
+            al_clear_to_color(al_map_rgb(0, 0, 0));
+        }
+
+
+
+
+    }
+
+
+    al_destroy_display(pantalla);
+    al_destroy_event_queue(colaEventos);
+    al_destroy_timer(timer);
+    al_rest(5.0);
+    return 0;
 }
-char GenerarRandom(){
-	char c = 'A' + fastrand() % 24;
-	return c;
-}
+//
+//
+//    NAVE nave;
+//    nave.inicializarStruct("Recursos/nave.bmp", "Recursos/bala2.bmp", 6, 12, 30, 20, ANCHO / 2, ALTO - 70, -8, 0, 3, "Recursos/shoot.wav", "Recursos/explosion.wav");
+//
+//    escudo escudo[30];
+//    iniciarEscudo(escudo);
+//
+//    NAVE enemigo[60];
+//    acomodarEnemigos(enemigo);
+//    enemigo[0].inicializarStruct("Recursos/enemigos.bmp", "Recursos/Bala_enem.bmp", 6, 12, 25, 20, 50, 80, 8);
+//    Balas disparos[nave.maxDisparos];
+//    std::cout << "Enemigo maxDisp "<<enemigo[0].maxDisparos << std::endl;
+//    Balas disparosEnemigo[enemigo[0].maxDisparos];
+//
+//    int random = rand() % 55;
+//    int mov = 0;
+//    int direccion = -5;
+//    int velocidadJuego = 10;
+//
+//    play_midi(musicaFondo, 1);
+//    mostrarPortada(portada);
+//    while (!key[KEY_ESC]) {
+//
+//        clear_to_color(buffer, 0x000000); //limpiamos el buffer
+//        /*Starts Control de la nave*/
+//        /********************************/
+//        nave.pintaNave(buffer, 0, 0);
+//        nave.mueveNave();
+//        crearBalaNave(nave, disparos);
+//        dibujarEscudo(escudo, imgMuros, buffer);
+//
+//        if (enemigo[0].temporizador(velocidadJuego)) {
+//            moverEnemigo(enemigo, mov, direccion);
+//        }
+//
+//        nave.disparar(disparos, buffer);
+//        for (int i = 0; i < 55; i++) {
+//            if (eliminaBalaObjeto(nave, enemigo[i], disparos)) {
+//                explosionEnemigo(enemigo[i], buffer);
+//            }
+//        }
+//        eliminaBalaEscudo(nave, escudo, disparos);
+//        /*Termina control de la nave*/
+//
+//        /********************************/
+//
+//        /*Starts Control del enemigo*/
+//        dibujarEnemigo(enemigo, buffer, mov);
+//        crearBalaEnemigo(enemigo, random);
+//        enemigo[random].disparar(disparosEnemigo, buffer);
+//
+//        if (eliminaBalaObjeto(enemigo[random], nave, disparosEnemigo)) {
+//            explosionNave(nave, buffer, fondo);
+//        }
+//        eliminaBalaEscudo(enemigo[random], escudo, disparosEnemigo);
+//
+//        mostrarFondo(fondo, buffer);
+//        blit(buffer, screen, 0, 0, 0, 0, ANCHO, ALTO); //imprimir el buffer sobre la pantalla
+//        
+//    }
 
-typedef struct hilera {
-	char caracter;
-	int X;  //coordenada en X para el caracter de mas abajo de una hilada
-	int Y;  //coordenada en Y para el caracter de mas abajo de una hilada
-	int contador;  //Sirve para contar los caracteres que faltan de salir de la ventana cuando la hilera llega al final
-};
-
-
-//Crea la hilera con un caracter random
-void generar(hilera hilera[total])
-{
-	char nuevocaracter;
-	for (int i = 0; i <= total; i++) {
-		nuevocaracter = 33 + rand() % 93;
-		hilera[i].caracter = nuevocaracter;
-	}
-}
-//Inicializa la hilera con valores por defecto
-void inicializar1(hilera hilera[total]) {
-	for (int i = 0; i < total; i++) {
-		hilera[i].X = fastrand() % 780 + 20;
-		hilera[i].Y = fastrand() % 40 + 10;
-		hilera[i].caracter = ' ';
-		hilera[i].contador = 0;
-	}
-}
-
-
-/*
-DIBUJAR LO QUE HACE ES EN BASE A UN STACK DEFINIDO Y UN CONJUNTO DE COORDENADAS IMPRIME EN EL DISPLAY
-LA SECUENCIA DE CARACTERES ASCII, Y A SU VEZ LLAMA A LA FUNCION DESPLAZAR PARA SACAR DEL STACK EL CARACTER MAS VIEJO Y
-AÑADIR AL INICIO EL MAS NUEVO
-*/
-char actual[1];
-void dibujar(hilera hilera[total]) {
-	int o = 200;
-	int count = 0;
-	int x = 350;
-
-	for (int i = 0; i < total; i++) {
-		int PosX = hilera[i].X;
-		int PosY = hilera[i].Y;
-
-
-		actual[0] = hilera[i].caracter;
-		al_draw_text(fuente, al_map_rgb(255, 255, 255), PosX, PosY, ALLEGRO_ALIGN_CENTRE, actual);
-
-		actual[0] = hilera[i + 1].caracter;
-		al_draw_text(fuente, al_map_rgb(0, 240, 0), PosX, PosY - 20, ALLEGRO_ALIGN_CENTRE, actual);
-
-		actual[0] = hilera[i + 2].caracter;
-		al_draw_text(fuente, al_map_rgb(0, 210, 0), PosX, PosY - 40, ALLEGRO_ALIGN_CENTRE, actual);
-
-		al_draw_text(fuente, al_map_rgb(0, 180, 0), PosX, PosY - 60, ALLEGRO_ALIGN_CENTRE, actual);
-		actual[0] = hilera[i + 3].caracter;
-		al_draw_text(fuente, al_map_rgb(0, 150, 0), PosX, PosY - 80, ALLEGRO_ALIGN_CENTRE, actual);
-
-		actual[0] = hilera[i + 4].caracter;
-		al_draw_text(fuente, al_map_rgb(0, 120, 0), PosX, PosY - 100, ALLEGRO_ALIGN_CENTRE, actual);
-		actual[0] = hilera[i + 5].caracter;
-
-		al_draw_text(fuente, al_map_rgb(0, 90, 0), PosX, PosY - 120, ALLEGRO_ALIGN_CENTRE, actual);
-		actual[0] = hilera[i + 6].caracter;
-
-		al_draw_text(fuente, al_map_rgb(0, 50, 0), PosX, PosY - 120, ALLEGRO_ALIGN_CENTRE, actual);
-		actual[0] = hilera[i + 7].caracter;
-		al_draw_text(fuente, al_map_rgb(0, 30, 0), PosX, PosY - 120, ALLEGRO_ALIGN_CENTRE, actual);
+/*al_destroy_bitmap(buffer);
+al_destroy_bitmap(portada);
+al_destroy_bitmap(fondo);
+al_destroy_bitmap(imgMuros);*/
+//return 0;
 
 
 
-		if (hilera[i].Y < 440) {
-			hilera[i].Y += 20;
-		}
-		if (hilera[i].Y >= 440)
-			hilera[i].contador++;
-		if (hilera[i].contador > 1) {
-			al_draw_text(fuente, al_map_rgb(255, 255, 255), hilera[i].X, PosY - (longitud - hilera[i].contador), ALLEGRO_ALIGN_CENTRE, actual);
-			hilera[i].Y = rand() % 40;
-			hilera[i].X = rand() % 780;
-			hilera[i].contador = 0;
-			o = 200;
+//emigo
+    //        dibujarEnemigo(enemigo, buffer, mov);
+    //        crearBalaEnemigo(enemigo, random);
+    //        enemigo[random].disparar(disparosEnemigo, buffer);
+    //
+    //        if (eliminaBalaObjeto(enemigo[random], nave, disparosEnemigo)) {
+    //            explosionNave(nave, buffer, fondo);
+    //        }
+    //        eliminaBalaEscudo(enemigo[random], escudo, disparosEnemigo);
+    //
+    //        mostrarFondo(fondo, buffer);
+    //        blit(buffer, screen, 0, 0, 0, 0, ANCHO, ALTO); //imprimir el buffer sobre la pantalla
+    //        
+    //    }
 
-		}
-	}
-	count++;
-}
-
-//Crea un archivo donde se guardan los valores necesarios para llevar la cuenta de los caracteres generados
-void guardarinventario(int Pilas, int Agrupacion_pilas, int tiempo, int letras) {
-	FILE* archivo;
-	fopen_s(&archivo, "archivo.txt", "w+");
-	if (NULL == archivo) {
-		printf("no se pudo abrir el archivo.");
-	}
-	else {
-		fprintf(archivo, "%i\n", Pilas);
-		fprintf(archivo, "%i\n", Agrupacion_pilas);
-		fprintf(archivo, "%i\n", tiempo);
-		fprintf(archivo, "%i\n", letras);
-	}
-	fclose(archivo);
-}
-
-
-int main() {
-	if (!al_init()) {
-		fprintf(stderr, "No se puede iniciar allegro!\n");
-		return -1;
-	}
-
-	//Esta línea de código permite que la ventana tenga la capacidad de cambiar de tamaño
-	al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
-
-	pantalla = al_create_display(720, 480);
-	al_set_window_position(pantalla, 200, 200);
-	al_set_window_title(pantalla, "MATRIX");
-	if (!pantalla) {
-		fprintf(stderr, "No se puede crear la pantalla!\n");
-		return -1;
-	}
-	//Líneas para obtener las funcionalidades del uso de las fuentes
-	//*******************
-	al_init_font_addon();
-	al_init_ttf_addon();
-	//*******************
-	//Línea para obtener las funcionalidades de las imágenes
-	//*******************
-	al_init_image_addon();
-	//*******************
-
-
-	//Líneas para obtener las funcionalidades de los audios
-	//*******************
-	al_install_keyboard();
-	al_install_audio();
-	al_init_primitives_addon();
-	al_init_acodec_addon();
-	//*******************
-
-	fuente = al_load_font("Georgia.ttf", 16, NULL);
-	al_reserve_samples(1);
-	ALLEGRO_SAMPLE* song = al_load_sample("AnyConv.com__Keyboard, typing sound effect.ogg");
-	ALLEGRO_SAMPLE_INSTANCE* songInstance = al_create_sample_instance(song);
-
-	al_set_sample_instance_playmode(songInstance, ALLEGRO_PLAYMODE_LOOP);
-	al_attach_sample_instance_to_mixer(songInstance, al_get_default_mixer());
-	al_play_sample_instance(songInstance);
-
-	//Timers que se necesitara la simulacion
-	//**********************************************************
-	ALLEGRO_TIMER* primerTimer = al_create_timer(5 / FPS);
-
-	//**********************************************************
-
-	//Se crea una cola de eventos
-	ALLEGRO_EVENT_QUEUE* colaEventos = al_create_event_queue();
-
-	//Registro de los eventos
-	//**********************************************************
-	al_register_event_source(colaEventos, al_get_timer_event_source(primerTimer));
-	al_register_event_source(colaEventos, al_get_keyboard_event_source());
-	//**********************************************************
-
-	ALLEGRO_KEYBOARD_STATE estadoTeclado;
-
-
-	//Inicialización de los timer
-	//**********************************************************
-	al_start_timer(primerTimer);
-	//**********************************************************
-	bool hecho = true;
-	int cont = 0;
-	int tiempo_Completo;
-	time_t inicio, fin;
-	hilera conj_hileras[total * 2];
-	inicializar1(conj_hileras);
-	inicio = time(NULL);
-	while (hecho) {
-		ALLEGRO_EVENT eventos;
-		al_wait_for_event(colaEventos, &eventos);
-		if (eventos.type == ALLEGRO_EVENT_KEY_DOWN) {
-			switch (eventos.keyboard.keycode)
-			{
-			case ALLEGRO_KEY_ESCAPE:
-				// Aca va lo que pasa cuando se presiona ESC
-				al_clear_to_color(al_map_rgb(0, 0, 0));
-				fin = time(NULL);
-				tiempo_Completo = difftime(fin, inicio);
-				guardarinventario(Pistas, Agrupacion_Pistas, tiempo_Completo, NewLetras);
-
-				hecho = false;
-				break;
-			default:
-				break;
-			}
-		}
-
-
-		if (eventos.type == ALLEGRO_EVENT_TIMER) {
-			if (eventos.timer.source == primerTimer) {
-
-				al_clear_to_color(al_map_rgb(0, 0, 0));
-				//AQUI VA LO QUE PASARIA EN EL EVENTO DADO POR EL PRIMER TIMER
-				Pistas += 30;
-				Agrupacion_Pistas += 10;
-				NewLetras += 10 * 30;
-
-				generar(conj_hileras);
-				dibujar(conj_hileras);
-				Sleep(1);
+    /*al_destroy_bitmap(buffer);
+    al_destroy_bitmap(portada);
+    al_destroy_bitmap(fondo);
+    al_destroy_bitmap(imgMuros);*/
 
 
 
-			}
-		}
-		al_flip_display();
-	}
-
-	// Muestra los datos de la simulacion
-	boolean mostrar = true;
-	while (mostrar) {
-		ALLEGRO_EVENT eventos;
-		al_wait_for_event(colaEventos, &eventos);
-		if (eventos.type == ALLEGRO_EVENT_KEY_DOWN) {
-			switch (eventos.keyboard.keycode)
-			{
-			case ALLEGRO_KEY_ESCAPE:
-				mostrar = false;
-				break;
-			default:
-				break;
-			}
-		}
-		string tmp;
-		string tmp2;
-		string tmp3;
-		string tmp4;
-		char const* tiempo;
-		char const* pistas;
-		char const* acumulador_pistas;
-		char const* letras;
-		tmp = to_string(tiempo_Completo);
-		tiempo = tmp.c_str();
-		tmp2 = to_string(Pistas);
-		pistas = tmp2.c_str();
-		tmp3 = to_string(Agrupacion_Pistas);
-		acumulador_pistas = tmp3.c_str();
-		tmp4 = to_string(NewLetras);
-		letras = tmp4.c_str();
-		char actual[1];
-		al_draw_text(fuente, al_map_rgb(250, 250, 15), 800 / 2, (40 * (150.0 / 768.0)), ALLEGRO_ALIGN_CENTRE, "Mostrar Resultados");
-		al_draw_text(fuente, al_map_rgb(250, 250, 250), 800 / 2, (80 * (250.0 / 768.0)), ALLEGRO_ALIGN_CENTRE, "Tiempo: ");
-		al_draw_text(fuente, al_map_rgb(250, 250, 250), 900 / 2, (80 * (250.0 / 768.0)), ALLEGRO_ALIGN_CENTRE, tiempo);
-		al_draw_text(fuente, al_map_rgb(250, 250, 250), 800 / 2, (160 * (250.0 / 768.0)), ALLEGRO_ALIGN_CENTRE, "Pistas: ");
-		al_draw_text(fuente, al_map_rgb(250, 250, 250), 900 / 2, (160 * (250.0 / 768.0)), ALLEGRO_ALIGN_CENTRE, pistas);
-		al_draw_text(fuente, al_map_rgb(250, 250, 250), 800 / 2, (240 * (250.0 / 768.0)), ALLEGRO_ALIGN_CENTRE, "Agrupacion de pistas: ");
-		al_draw_text(fuente, al_map_rgb(250, 250, 250), 980 / 2, (240 * (250.0 / 768.0)), ALLEGRO_ALIGN_CENTRE, acumulador_pistas);
-		al_draw_text(fuente, al_map_rgb(250, 250, 250), 800 / 2, (300 * (250.0 / 768.0)), ALLEGRO_ALIGN_CENTRE, "Nuevas letras impresas: ");
-		al_draw_text(fuente, al_map_rgb(250, 250, 250), 1050 / 2, (300 * (250.0 / 768.0)), ALLEGRO_ALIGN_CENTRE, letras);
-		al_flip_display();
-	}
-
-}
